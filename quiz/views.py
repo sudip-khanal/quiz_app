@@ -1,12 +1,17 @@
 from django.shortcuts import render
 from django.views import View
 from .models import *
+import random
 
 
 # Create your views here.
 class Homeview(View):
-    def get(self, request, id):
-        q = Question.objects.all()
-        a = Answer.objects.get(id=BaseModel.uid)
-        print(q)
-        return render(request, "base.html", {"questions": q, "answers": a})
+    def get(self, request):
+        q =list( Question.objects.all())
+        random.shuffle(q)
+        #a = Answer.objects.filter(Question.uid)
+        for question in q:
+            answers = list(question.question_answer.all())
+            random.shuffle(answers)
+            question.shuffled_answers = answers
+        return render(request, "base.html", {"questions": q})

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -17,15 +17,66 @@
       <center><h1>Quiz</h1></center>
     </div>
     <div class="container jumbotron">
+      {% if questions %}
       <ol>
-        {% for q in questions %}
-        <li>{{q.question}}</li>
-        {% for a in answers %}
-          
-        {% endfor %}
-        <input type="radio" name="ans" id="1" />{%an%} <br /> 
-        {% endif %} {% endfor%}
+        {% for question in questions %}
+        <h3><li>{{ question.question }} ?</li></h3>
+
+        {% for answer in question.shuffled_answers %}
+        <input type="radio" name="ans" id="1" />
+        {{answer.answer }}
+        <br />
+
+        {% endfor %} {% endfor %}
       </ol>
+      {% else %}
+      <p>No quiz questions available.</p>
+      {% endif %}
     </div>
+  </body>
+</html>
+{% endcomment %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quiz Game</title>
+    <script>
+      var timeLeft = 120; // Set the countdown time in seconds
+      var timer = setInterval(countdown, 1000); // Start the countdown timer
+
+      function countdown() {
+        var timerElement = document.getElementById("timer");
+        timerElement.innerHTML = "Time Left: " + timeLeft + "s";
+
+        if (timeLeft <= 0) {
+          clearInterval(timer); // Stop the timer when it reaches 0
+          document.getElementById("quiz-form").submit(); // Automatically submit the form
+        } else {
+          timeLeft--;
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1 id="timer">Time Left: 2m</h1>
+
+    <form id="quiz-form" method="POST">
+      {% csrf_token %} {% if questions %}
+      <ol>
+        {% for question in questions %}
+        <h3><li>{{ question.question }} ?</li></h3>
+
+        {% for answer in question.shuffled_answers %}
+        <input type="radio" name="ans" id="{{ forloop.counter }}" />
+        {{ answer.answer }}
+        <br />
+        {% endfor %} {% endfor %}
+      </ol>
+
+      <input type="submit" value="Submit" />
+      {% else %}
+      <p>No quiz questions available.</p>
+      {% endif %}
+    </form>
   </body>
 </html>
