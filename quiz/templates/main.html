@@ -1,0 +1,162 @@
+{% comment %} <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div>
+      <center><h1>Quiz</h1></center>
+    </div>
+    <div class="container jumbotron">
+      {% if questions %}
+      <ol>
+        {% for question in questions %}
+        <h3><li>{{ question.question }} ?</li></h3>
+
+        {% for answer in question.shuffled_answers %}
+        <input type="radio" name="ans" id="1" />
+        {{answer.answer }}
+        <br />
+
+        {% endfor %} {% endfor %}
+      </ol>
+      {% else %}
+      <p>No quiz questions available.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>
+{% endcomment %} {% comment %} <!DOCTYPE html>
+<html>
+  <head>
+    <title>Quiz Game</title>
+    <script>
+      var timeLeft = 120; // Set the countdown time in seconds
+      var timer = setInterval(countdown, 1000); // Start the countdown timer
+
+      function countdown() {
+        var timerElement = document.getElementById("timer");
+        timerElement.innerHTML = "Time Left: " + timeLeft + "s";
+
+        if (timeLeft <= 0) {
+          clearInterval(timer); // Stop the timer when it reaches 0
+          document.getElementById("quiz-form").submit(); // Automatically submit the form
+        } else {
+          timeLeft--;
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1 id="timer">Time Left: 2m</h1>
+
+    <form id="quiz-form" method="POST">
+      {% csrf_token %} {% if questions %}
+      <ol>
+        {% for question in questions %}
+        <h3><li>{{ question.question }} ?</li></h3>
+
+        {% for answer in question.shuffled_answers %}
+        <input type="radio" name="ans" id="{{ forloop.counter }}" />
+        {{ answer.answer }}
+        <br />
+        {% endfor %} {% endfor %}
+      </ol>
+
+      <input type="submit" value="Submit" />
+      {% else %}
+      <p>No quiz questions available.</p>
+      {% endif %}
+    </form>
+  </body>
+</html>
+{% endcomment %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quiz Game</title>
+    <script>
+      var timeLeft = 3600; // Set the countdown time in seconds (1 hour)
+      var timer;
+
+      function startQuiz() {
+        var startButton = document.getElementById("start-button");
+
+        if (startButton.innerHTML === "Start Quiz") {
+          startButton.innerHTML = "End Quiz";
+          document.getElementById("quiz-container").style.display = "block"; // Show the quiz container
+          timer = setInterval(countdown, 1000); // Start the countdown timer
+        } else {
+          clearInterval(timer); // Stop the timer
+          document.getElementById("quiz-form").submit(); // Automatically submit the form
+        }
+      }
+
+      function countdown() {
+        var hours = Math.floor(timeLeft / 3600);
+        var minutes = Math.floor((timeLeft % 3600) / 60);
+        var seconds = timeLeft % 60;
+
+        var timerElement = document.getElementById("timer");
+        timerElement.innerHTML =
+          "Time Left: " +
+          formatTime(hours) +
+          ":" +
+          formatTime(minutes) +
+          ":" +
+          formatTime(seconds);
+
+        if (timeLeft <= 0) {
+          clearInterval(timer); // Stop the timer when it reaches 0
+          document.getElementById("quiz-form").submit(); // Automatically submit the form
+        } else {
+          timeLeft--;
+        }
+      }
+
+      function formatTime(time) {
+        return time < 10 ? "0" + time : time;
+      }
+    </script>
+  </head>
+  <body>
+    <button id="start-button" onclick="startQuiz()">Start Quiz</button>
+
+    <div id="quiz-container" style="display: none">
+      <h1 id="timer">Time Left: 01:00:00</h1>
+
+      <form id="quiz-form" method="POST">
+        {% csrf_token %} {% if questions %}
+        <ol>
+          {% for question in questions %}
+          <h3><li>{{ question.question }} ?</li></h3>
+
+          {% for answer in question.shuffled_answers %}
+          <input
+            type="radio"
+            name="question_{{ question.uid }}"
+            id="answer_{{ answer.uid }}"
+            value="{{ answer.uid }}"
+          />
+          <label for="answer_{{ answer.uid }}">{{ answer.answer }}</label>
+          <br />
+          {% endfor %} {% endfor %}
+        </ol>
+
+        <input type="submit" value="Submit" />
+        {% else %}
+        <p>No quiz questions available.</p>
+        {% endif %}
+      </form>
+    </div>
+  </body>
+</html>

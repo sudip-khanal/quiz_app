@@ -1,162 +1,56 @@
-{% comment %} <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
     <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
       crossorigin="anonymous"
     />
+
+    <title>Django Project</title>
   </head>
   <body>
-    <div>
-      <center><h1>Quiz</h1></center>
+    {% include 'navbar.html' %}
+    <div class="container">
+      <br />
+      {% if messages %} {% for message in messages %}
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{message}}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% block content %} {% endblock %}
     </div>
-    <div class="container jumbotron">
-      {% if questions %}
-      <ol>
-        {% for question in questions %}
-        <h3><li>{{ question.question }} ?</li></h3>
+    <!-- Optional JavaScript; choose one of the two! -->
 
-        {% for answer in question.shuffled_answers %}
-        <input type="radio" name="ans" id="1" />
-        {{answer.answer }}
-        <br />
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
 
-        {% endfor %} {% endfor %}
-      </ol>
-      {% else %}
-      <p>No quiz questions available.</p>
-      {% endif %}
-    </div>
-  </body>
-</html>
-{% endcomment %} {% comment %} <!DOCTYPE html>
-<html>
-  <head>
-    <title>Quiz Game</title>
-    <script>
-      var timeLeft = 120; // Set the countdown time in seconds
-      var timer = setInterval(countdown, 1000); // Start the countdown timer
+    <!-- Option 2: Separate Popper and Bootstrap JS -->
 
-      function countdown() {
-        var timerElement = document.getElementById("timer");
-        timerElement.innerHTML = "Time Left: " + timeLeft + "s";
-
-        if (timeLeft <= 0) {
-          clearInterval(timer); // Stop the timer when it reaches 0
-          document.getElementById("quiz-form").submit(); // Automatically submit the form
-        } else {
-          timeLeft--;
-        }
-      }
-    </script>
-  </head>
-  <body>
-    <h1 id="timer">Time Left: 2m</h1>
-
-    <form id="quiz-form" method="POST">
-      {% csrf_token %} {% if questions %}
-      <ol>
-        {% for question in questions %}
-        <h3><li>{{ question.question }} ?</li></h3>
-
-        {% for answer in question.shuffled_answers %}
-        <input type="radio" name="ans" id="{{ forloop.counter }}" />
-        {{ answer.answer }}
-        <br />
-        {% endfor %} {% endfor %}
-      </ol>
-
-      <input type="submit" value="Submit" />
-      {% else %}
-      <p>No quiz questions available.</p>
-      {% endif %}
-    </form>
-  </body>
-</html>
-{% endcomment %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Quiz Game</title>
-    <script>
-      var timeLeft = 3600; // Set the countdown time in seconds (1 hour)
-      var timer;
-
-      function startQuiz() {
-        var startButton = document.getElementById("start-button");
-
-        if (startButton.innerHTML === "Start Quiz") {
-          startButton.innerHTML = "End Quiz";
-          document.getElementById("quiz-container").style.display = "block"; // Show the quiz container
-          timer = setInterval(countdown, 1000); // Start the countdown timer
-        } else {
-          clearInterval(timer); // Stop the timer
-          document.getElementById("quiz-form").submit(); // Automatically submit the form
-        }
-      }
-
-      function countdown() {
-        var hours = Math.floor(timeLeft / 3600);
-        var minutes = Math.floor((timeLeft % 3600) / 60);
-        var seconds = timeLeft % 60;
-
-        var timerElement = document.getElementById("timer");
-        timerElement.innerHTML =
-          "Time Left: " +
-          formatTime(hours) +
-          ":" +
-          formatTime(minutes) +
-          ":" +
-          formatTime(seconds);
-
-        if (timeLeft <= 0) {
-          clearInterval(timer); // Stop the timer when it reaches 0
-          document.getElementById("quiz-form").submit(); // Automatically submit the form
-        } else {
-          timeLeft--;
-        }
-      }
-
-      function formatTime(time) {
-        return time < 10 ? "0" + time : time;
-      }
-    </script>
-  </head>
-  <body>
-    <button id="start-button" onclick="startQuiz()">Start Quiz</button>
-
-    <div id="quiz-container" style="display: none">
-      <h1 id="timer">Time Left: 01:00:00</h1>
-
-      <form id="quiz-form" method="POST">
-        {% csrf_token %} {% if questions %}
-        <ol>
-          {% for question in questions %}
-          <h3><li>{{ question.question }} ?</li></h3>
-
-          {% for answer in question.shuffled_answers %}
-          <input
-            type="radio"
-            name="question_{{ question.uid }}"
-            id="answer_{{ answer.uid }}"
-            value="{{ answer.uid }}"
-          />
-          <label for="answer_{{ answer.uid }}">{{ answer.answer }}</label>
-          <br />
-          {% endfor %} {% endfor %}
-        </ol>
-
-        <input type="submit" value="Submit" />
-        {% else %}
-        <p>No quiz questions available.</p>
-        {% endif %}
-      </form>
-    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
