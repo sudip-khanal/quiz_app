@@ -43,4 +43,10 @@ class Answer(BaseModel):
     def __str__(self):
         return self.answer
     
+class Result(BaseModel):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    marks = models.IntegerField()
+
+    def __str__(self):
+        return f'{self.user} {self.marks}'
 

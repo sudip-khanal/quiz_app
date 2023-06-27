@@ -22,10 +22,12 @@
         {% if user.is_authenticated %}
 
         <li class="nav-item">
-          <a class="nav-link" href="{% url '#' %}"> Record</a>
+          <a class="nav-link" href="{% url 'Mainview' %}"> Mainview</a>
         </li>
+
+        <li class="nav-link">welcome to quiz app {{request.user}}</li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url '#' %}">Logout</a>
+          <a class="nav-link" href="{% url 'UserLogout' %}">Logout</a>
         </li>
         {% else %}
         <li class="nav-item">
@@ -33,12 +35,13 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'home' %}">Login</a>
+          <a class="nav-link" href="{% url 'loginview' %}">Login</a>
         </li>
 
         {% endif %}
       </ul>
       <!-- search -->
+      {% comment %}
       <form class="d-flex">
         <input
           class="form-control me-2"
@@ -48,6 +51,7 @@
         />
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
+      {% endcomment %}
     </div>
   </div>
 </nav>

@@ -1,13 +1,13 @@
 {% extends 'base.html' %} {% block content %}
-
 <div class="col-md-6 offset md-3">
   <h1>Register</h1>
 
-  <form method="POST" id="signup-form" class="signup-form">
-    {% if form.errors %}
+  <form method="POST" action="">
+    {% csrf_token %} {% if form.errors %}
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      Your Form Has Errors {% for field in form %} {% if field.errors %} {{
-      field.errors }} {% endif %} {% endfor %}
+      Your Form Has Errors {% for field in form %} {% if field.errors %}
+      {{field.errors}} {% endif %} {% endfor %}
+      <!-- Remove the error messages from the template -->
       <button
         type="button"
         class="btn-close"
@@ -15,8 +15,7 @@
         aria-label="Close"
       ></button>
     </div>
-    {% endif %} {% csrf_token %} {{ form.as_p }}
-
+    {% endif %} {{ form.as_p }}
     <button type="submit" class="btn btn-secondary">Signup</button>
   </form>
 </div>

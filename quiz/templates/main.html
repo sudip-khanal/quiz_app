@@ -1,3 +1,4 @@
+{% extends 'base.html' %}
 {% comment %} <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -80,12 +81,10 @@
   </body>
 </html>
 {% endcomment %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Quiz Game</title>
+ {% block content %}
+
     <script>
-      var timeLeft = 3600; // Set the countdown time in seconds (1 hour)
+      var timeLeft = 20; // Set the countdown time in seconds (1 hour)
       var timer;
 
       function startQuiz() {
@@ -129,34 +128,31 @@
     </script>
   </head>
   <body>
+    <div class="container">
     <button id="start-button" onclick="startQuiz()">Start Quiz</button>
-
-    <div id="quiz-container" style="display: none">
-      <h1 id="timer">Time Left: 01:00:00</h1>
-
-      <form id="quiz-form" method="POST">
+    <h1>Welcome to  Quiz</h1>
+    <div align="right" id="displaytimer">    <h1 id="timer">Time Left: 2m</h1>
+    </div>
+    
+      <form id="quiz-form" method="POST" action="{% url 'Mainview' %}">
         {% csrf_token %} {% if questions %}
         <ol>
           {% for question in questions %}
-          <h3><li>{{ question.question }} ?</li></h3>
-
-          {% for answer in question.shuffled_answers %}
-          <input
-            type="radio"
-            name="question_{{ question.uid }}"
-            id="answer_{{ answer.uid }}"
-            value="{{ answer.uid }}"
-          />
-          <label for="answer_{{ answer.uid }}">{{ answer.answer }}</label>
-          <br />
+          <div class="form-group">
+            <h3>{{ question.question }}</h3>
+            {% for answer in question.shuffled_answers %}
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="question_{{ question.uid }}" id="answer_{{ answer.uid }}" value="{{ answer.uid }}">
+                <label class="form-check-label" for="answer_{{ answer.uid }}">{{ answer.answer }}</label>
+              </div>
           {% endfor %} {% endfor %}
+          </div>
         </ol>
-
         <input type="submit" value="Submit" />
         {% else %}
         <p>No quiz questions available.</p>
         {% endif %}
       </form>
     </div>
-  </body>
-</html>
+ {% endblock %} 
+ 
